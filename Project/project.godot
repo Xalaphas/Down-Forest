@@ -327,6 +327,10 @@ _global_script_class_icons={
 [application]
 
 config/name="Down Forest"
+run/main_scene="res://Levels/SplashContainer.tscn"
+boot_splash/image="res://addons/awesome_splash/assets/None.png"
+boot_splash/fullsize=false
+boot_splash/use_filter=false
 config/icon="res://icon.png"
 
 [autoload]
