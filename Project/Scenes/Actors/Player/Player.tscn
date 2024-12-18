@@ -1,8 +1,10 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://Scripts/Actors/Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/player/char_red.png" type="Texture" id=2]
 [ext_resource path="res://Scripts/Actors/Player/PlayerTexture.gd" type="Script" id=3]
+[ext_resource path="res://assets/effect/light.png" type="Texture" id=4]
+[ext_resource path="res://Scripts/Actors/Player/PlayerStats.gd" type="Script" id=5]
 
 [sub_resource type="RectangleShape2D" id=8]
 
@@ -313,14 +315,89 @@ tracks/0/keys = {
 "values": [ 80, 81, 82 ]
 }
 
+[sub_resource type="Animation" id=13]
+resource_name = "WallSlide"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 85, 86 ]
+}
+
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 6, 15.5 )
+
+[sub_resource type="Animation" id=14]
+resource_name = "LightAnimaiton"
+length = 10.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.1, 5.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.3, 0.25 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.1, 5.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.8, 0.6 ]
+}
+
+[sub_resource type="Animation" id=15]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.3 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.8 ]
+}
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
 speed = 75
-jump_speed = -175
 player_gravity = 350
+wall_gravity = 66
+jump_speed = -175
+wall_jump_speed = -150
+wall_inpulse_speed = 500
 
 [node name="Texture" type="Sprite" parent="."]
 texture = ExtResource( 2 )
@@ -342,6 +419,7 @@ anims/Landing = SubResource( 7 )
 anims/RESET = SubResource( 3 )
 anims/Run = SubResource( 4 )
 anims/Shield = SubResource( 12 )
+anims/WallSlide = SubResource( 13 )
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2( -1, 12.5 )
@@ -349,7 +427,7 @@ shape = SubResource( 1 )
 
 [node name="LevelCamera" type="Camera2D" parent="."]
 current = true
-limit_top = 0
+limit_top = -20
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = true
@@ -358,5 +436,23 @@ smoothing_speed = 8.0
 [node name="AttackArea" type="Area2D" parent="."]
 
 [node name="Collision" type="CollisionShape2D" parent="AttackArea"]
+
+[node name="WallRay" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 5.5, 0 )
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 4 )
+texture_scale = 0.3
+color = Color( 2.15, 1.14, 2, 1 )
+energy = 0.8
+
+[node name="Animation" type="AnimationPlayer" parent="Light2D"]
+autoplay = "LightAnimaiton"
+anims/LightAnimaiton = SubResource( 14 )
+anims/RESET = SubResource( 15 )
+
+[node name="Stats" type="Node" parent="."]
+script = ExtResource( 5 )
 
 [connection signal="animation_finished" from="Animation" to="Texture" method="_on_animation_finished"]
