@@ -1,6 +1,12 @@
 extends Node
 class_name PlayerStats
 
+
+export(NodePath) onready var player = get_node(player) as KinematicBody2D
+export(NodePath) onready var collision_area = get_node(collision_area) as Area2D 
+
+onready var invencibillity_timer: Timer = get_node("InvencibillityTimer")
+
 var shielding: bool = false
 
 var base_health: int = 20
@@ -56,3 +62,51 @@ func update_exp(value: int) -> void:
 func on_level_up() -> void:
     current_mana = base_mana + bonus_mana
     current_health = base_health + bonus_health
+
+func update_health(type: String, value: int) -> void:
+    match type:
+        "Increase":
+            current_health += value
+            if current_health >= max_health:
+                current_health = max_health
+        "Decrease":
+            verify_shield(value)
+            if current_health <= 0:
+                player.dead = true
+            else:
+                player.on_hit = true
+                player.attacking = false
+
+func verify_shield(value: int) -> void:
+    if shielding:
+        if (base_defense + bonus_defense) >= value:
+            return
+
+        var damage = abs((base_defense + bonus_defense) - value)
+        current_health -= damage
+    else:
+        current_health -= value
+        
+
+func update_mana(type: String, value: int) -> void:
+    match type:
+        "Increase":
+            current_mana += value
+            if current_mana >= max_mana:
+                current_mana = max_mana
+        "Decrease":
+            current_mana -= value
+
+func _process(_delta):
+    if Input.is_action_just_pressed("ui_up"):
+        update_health("Decrease", 5)
+
+func _on_collision_area_entered(area):
+	if area.name == "EnemyAttackArea":
+        update_health("Decrease", area.damage)
+        collision_area.set_deferred("monotoring", false)
+        invencibillity_timer.start(area.invencibillity_time) 
+
+
+func _on_invencibillity_timer_time_out() -> void:
+	collision_area.set_deferred("monotoring", true)
