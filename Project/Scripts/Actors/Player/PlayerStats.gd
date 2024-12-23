@@ -30,83 +30,82 @@ var max_mana: int
 
 var level: int = 1
 var level_dict: Dictionary = {
-    "1": 25,
-    "2": 50,
-    "3": 75,
-    "4": 100,
-    "5": 125,
-    "6": 150,
-    "7": 175,
-    "8": 200,
-    "9": 225,
-    "10": 250
+	"1": 25,
+	"2": 50,
+	"3": 75,
+	"4": 100,
+	"5": 125,
+	"6": 150,
+	"7": 175,
+	"8": 200,
+	"9": 225,
+	"10": 250
 }
 
 func _ready() -> void:
-    current_mana = base_mana + bonus_mana
-    max_mana = current_mana
+	current_mana = base_mana + bonus_mana
+	max_mana = current_mana
 
-    current_health = base_health + bonus_health
-    max_health = current_health
+	current_health = base_health + bonus_health
+	max_health = current_health
 
 func update_exp(value: int) -> void:
-    current_exp += value
-    if current_exp >= level_dict[str(level)] and level < 10:
-        var leftover: int = current_exp - level_dict[str(level)]
-        current_exp = leftover
-        on_level_up()
-        level += 1
-    elif current_exp >= level_dict[str(level)] and level == 10:
-        current_exp = level_dict[str(level)]
+	current_exp += value
+	if current_exp >= level_dict[str(level)] and level < 10:
+		var leftover: int = current_exp - level_dict[str(level)]
+		current_exp = leftover
+		on_level_up()
+		level += 1
+	elif current_exp >= level_dict[str(level)] and level == 10:
+		current_exp = level_dict[str(level)]
 
 func on_level_up() -> void:
-    current_mana = base_mana + bonus_mana
-    current_health = base_health + bonus_health
+	current_mana = base_mana + bonus_mana
+	current_health = base_health + bonus_health
 
 func update_health(type: String, value: int) -> void:
-    match type:
-        "Increase":
-            current_health += value
-            if current_health >= max_health:
-                current_health = max_health
-        "Decrease":
-            verify_shield(value)
-            if current_health <= 0:
-                player.dead = true
-            else:
-                player.on_hit = true
-                player.attacking = false
+	match type:
+		"Increase":
+			current_health += value
+			if current_health >= max_health:
+				current_health = max_health
+		"Decrease":
+			verify_shield(value)
+			if current_health <= 0:
+				player.dead = true
+			else:
+				player.on_hit = true
+				player.attacking = false
 
 func verify_shield(value: int) -> void:
-    if shielding:
-        if (base_defense + bonus_defense) >= value:
-            return
+	if shielding:
+		if (base_defense + bonus_defense) >= value:
+			return
 
-        var damage = abs((base_defense + bonus_defense) - value)
-        current_health -= damage
-    else:
-        current_health -= value
-        
+		var damage = abs((base_defense + bonus_defense) - value)
+		current_health -= damage
+	else:
+		current_health -= value
+		
 
 func update_mana(type: String, value: int) -> void:
-    match type:
-        "Increase":
-            current_mana += value
-            if current_mana >= max_mana:
-                current_mana = max_mana
-        "Decrease":
-            current_mana -= value
+	match type:
+		"Increase":
+			current_mana += value
+			if current_mana >= max_mana:
+				current_mana = max_mana
+		"Decrease":
+			current_mana -= value
 
 func _process(_delta):
-    if Input.is_action_just_pressed("ui_up"):
-        update_health("Decrease", 5)
+	if Input.is_action_just_pressed("ui_up"):
+		update_health("Decrease", 5)
 
 func _on_collision_area_entered(area):
 	if area.name == "EnemyAttackArea":
-        update_health("Decrease", area.damage)
-        collision_area.set_deferred("monotoring", false)
-        invencibillity_timer.start(area.invencibillity_time) 
-
+		update_health("Decrease", area.damage)
+		collision_area.set_deferred("monotoring", false)
+		invencibillity_timer.start(area.invencibillity_time)
 
 func _on_invencibillity_timer_time_out() -> void:
 	collision_area.set_deferred("monotoring", true)

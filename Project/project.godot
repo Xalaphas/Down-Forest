@@ -54,6 +54,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scripts/Actors/Enemy/EnemyTemplate.gd"
 }, {
+"base": "Sprite",
+"class": "EnemyTexture",
+"language": "GDScript",
+"path": "res://Scripts/Actors/Enemy/EnemyTexture.gd"
+}, {
 "base": "Reference",
 "class": "GDAction",
 "language": "GDScript",
@@ -303,6 +308,11 @@ _global_script_classes=[ {
 "class": "SplashContainer",
 "language": "GDScript",
 "path": "res://addons/awesome_splash/core/SplashContainer.gd"
+}, {
+"base": "EnemyTexture",
+"class": "WhaleTexture",
+"language": "GDScript",
+"path": "res://Scripts/Actors/Enemy/Whale/WhaleTexture.gd"
 } ]
 _global_script_class_icons={
 "AspectNode": "res://addons/awesome_splash/assets/icon/aspect_node_icon.png",
@@ -314,6 +324,7 @@ _global_script_class_icons={
 "Background": "",
 "DetectionArea": "",
 "EnemyTemplate": "",
+"EnemyTexture": "",
 "GDAction": "",
 "GDActionColorize": "",
 "GDActionCustomAction": "",
@@ -363,7 +374,8 @@ _global_script_class_icons={
 "Player": "",
 "PlayerStats": "",
 "PlayerTexture": "",
-"SplashContainer": "res://addons/awesome_splash/assets/icon/splash_container_icon.png"
+"SplashContainer": "res://addons/awesome_splash/assets/icon/splash_container_icon.png",
+"WhaleTexture": ""
 }
 
 [application]
@@ -472,6 +484,13 @@ crouch={
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[layer_names]
+
+2d_physics/layer_1="Tile"
+2d_physics/layer_2="SlideTile"
+2d_physics/layer_3="Player"
+2d_physics/layer_4="Enemy"
 
 [physics]
 
